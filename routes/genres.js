@@ -2,7 +2,7 @@ const Joi = require('joi');
 const express = require('express');
 const { concatErrorMessages } = require('../helpers');
 
-const route = express.Router();
+const router = express.Router();
 let genres = [
   { id: 1, name: 'Terror' },
   { id: 2, name: 'Action' }
@@ -13,11 +13,11 @@ const genreSchema = Joi.object({
 });
 const validateGenreSchema = (genre) => genreSchema.validate(genre, { abortEarly: false });
 
-route.get('/', (req, res) => {
+router.get('/', (req, res) => {
   return res.send(genres);
 });
 
-route.post('/', (req, res) => {
+router.post('/', (req, res) => {
   let newGenre = { ...req.body };
   let errorMessage;
   const { error } = validateGenreSchema(newGenre);
@@ -32,7 +32,7 @@ route.post('/', (req, res) => {
   return res.send(newGenre);
 });
 
-route.get('/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   const genre = getGenreById(parseInt(req.params.id, 10));
 
   if(!genre) {
@@ -42,7 +42,7 @@ route.get('/:id', (req, res) => {
   return res.send(genre);
 });
 
-route.put('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
   let errorMessage;
   let updateForGenre = { ...req.body }
   const genre = getGenreById(parseInt(req.params.id, 10));
@@ -59,7 +59,7 @@ route.put('/:id', (req, res) => {
   return res.send(genre);
 });
 
-route.delete('/:id', (req, res) => {
+router.delete('/:id', (req, res) => {
   const id = parseInt(req.params.id, 10);
   const genre = getGenreById(id);
 
@@ -71,4 +71,4 @@ route.delete('/:id', (req, res) => {
   return res.send(genre);
 });
 
-module.exports = route;
+module.exports = router;
