@@ -21,7 +21,7 @@ app.get('/api/genres', (req, res) => {
   return res.send(genres);
 });
 
-app.get('/api/genre/:id', (req, res) => {
+app.get('/api/genres/:id', (req, res) => {
   const genre = getGenreById(parseInt(req.params.id, 10));
 
   if(!genre) {
@@ -31,7 +31,7 @@ app.get('/api/genre/:id', (req, res) => {
   return res.send(genre);
 });
 
-app.put('/api/genre/:id', (req, res) => {
+app.put('/api/genres/:id', (req, res) => {
   let errorMessage;
   let updateForGenre = { ...req.body }
   const genre = getGenreById(parseInt(req.params.id, 10));
@@ -48,7 +48,7 @@ app.put('/api/genre/:id', (req, res) => {
   return res.send(genre);
 });
 
-app.delete('/api/genre/:id', (req, res) => {
+app.delete('/api/genres/:id', (req, res) => {
   const id = parseInt(req.params.id, 10);
   const genre = getGenreById(id);
 
