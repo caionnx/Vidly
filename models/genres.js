@@ -1,4 +1,11 @@
+const Joi = require('joi');
 const mongoose = require('mongoose');
+
+// Helpers functions for Joi validation
+const genreSchema = Joi.object({
+  name: Joi.string().min(3).max(50).required(),
+});
+const JoiValidateGenre = (genre) => genreSchema.validate(genre, { abortEarly: false });
 
 const Genre = new mongoose.model('Genre', new mongoose.Schema({
   name: {
@@ -46,5 +53,6 @@ module.exports = {
   getAllGenres,
   getGenreById,
   updateGenreById,
-  deleteGenreById
+  deleteGenreById,
+  JoiValidateGenre
 };

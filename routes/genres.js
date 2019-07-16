@@ -1,23 +1,17 @@
-const Joi = require('joi');
 const express = require('express');
+const router = express.Router();
+const { concatErrorMessages } = require('../helpers');
 // Functions that will operate directly in the database
 const {
   addNewGenre,
   getAllGenres,
   getGenreById,
   updateGenreById,
-  deleteGenreById
+  deleteGenreById,
+  JoiValidateGenre
 } = require('../models/genres');
 
-// Helpers functions for Joi validation
-const { concatErrorMessages } = require('../helpers');
-const genreSchema = Joi.object({
-  name: Joi.string().min(3).max(50).required(),
-});
-const validateGenreSchema = (genre) => genreSchema.validate(genre, { abortEarly: false });
-
 // Router manipulation
-const router = express.Router();
 router.get('/', async (req, res) => {
   const genres = await getAllGenres();
 
@@ -27,7 +21,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   let data = { ...req.body };
   let errorMessage;
-  const { error } = validateGenreSchema(data);
+  const { error } = JoiValidateGenre(data);
   
   if (error) {
     errorMessage = concatErrorMessages({ arrayOfErrors: error.details, param: 'message' });
@@ -58,7 +52,7 @@ router.get('/:id', async(req, res) => {
 router.put('/:id', async(req, res) => {
   let errorMessage;
   let data = { ...req.body }
-  const { error: errorFromJoiValidation } = validateGenreSchema(data);
+  const { error: errorFromJoiValidation } = JoiValidateGenre(data);
 
   if(errorFromJoiValidation) {
     errorMessage = concatErrorMessages({ arrayOfErrors: errorFromJoiValidation.details, param: 'message' });
