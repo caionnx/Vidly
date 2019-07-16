@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
 
-const genreSchema = new mongoose.Schema({
+const Genre = new mongoose.model('Genre', new mongoose.Schema({
   name: {
     type: String,
     minlength: 3,
     required: true
   }
-});
-
-const Genre = new mongoose.model('Genre', genreSchema);
+}));
 
 function getAllGenres() {
   return Genre.find();
