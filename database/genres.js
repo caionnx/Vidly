@@ -4,6 +4,7 @@ const Genre = new mongoose.model('Genre', new mongoose.Schema({
   name: {
     type: String,
     minlength: 3,
+    maxlength: 50,
     required: true
   }
 }));

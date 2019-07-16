@@ -12,7 +12,7 @@ const {
 // Helpers functions for Joi validation
 const { concatErrorMessages } = require('../helpers');
 const genreSchema = Joi.object({
-  name: Joi.string().min(3).required(),
+  name: Joi.string().min(3).max(50).required(),
 });
 const validateGenreSchema = (genre) => genreSchema.validate(genre, { abortEarly: false });
 
