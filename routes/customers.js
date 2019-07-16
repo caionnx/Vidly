@@ -1,25 +1,16 @@
-const Joi = require('joi');
 const express = require('express');
+const router = express.Router();
+const { concatErrorMessages } = require('../helpers');
 // Functions that will operate directly in the database
 const {
   addNewCustomer,
   getAllCustomers,
   getCustomerById,
   updateCustomerById,
-  deleteCustomerById
+  deleteCustomerById,
+  JoiValidateCustomer
 } = require('../models/customers');
 
-// Helpers functions for Joi validation
-const { concatErrorMessages } = require('../helpers');
-const customerSchema = Joi.object({
-  name: Joi.string().min(3).max(50).required(),
-  phone: Joi.string().min(3).max(15).required(),
-  isGold: Joi.boolean()
-});
-const validateCustomerSchema = (customer) => customerSchema.validate(customer, { abortEarly: false });
-
-// Router manipulation
-const router = express.Router();
 router.get('/', async (req, res) => {
   const customers = await getAllCustomers();
 
@@ -29,7 +20,7 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
   let data = { ...req.body };
   let errorMessage;
-  const { error } = validateCustomerSchema(data);
+  const { error } = JoiValidateCustomer(data);
   
   if (error) {
     errorMessage = concatErrorMessages({ arrayOfErrors: error.details, param: 'message' });
@@ -60,7 +51,7 @@ router.get('/:id', async(req, res) => {
 router.put('/:id', async(req, res) => {
   let errorMessage;
   let data = { ...req.body }
-  const { error: errorFromJoiValidation } = validateCustomerSchema(data);
+  const { error: errorFromJoiValidation } = JoiValidateCustomer(data);
 
   if(errorFromJoiValidation) {
     errorMessage = concatErrorMessages({ arrayOfErrors: errorFromJoiValidation.details, param: 'message' });

@@ -1,4 +1,13 @@
+const Joi = require('joi');
 const mongoose = require('mongoose');
+
+// Helpers functions for Joi validation
+const customerSchema = Joi.object({
+  name: Joi.string().min(3).max(50).required(),
+  phone: Joi.string().min(3).max(15).required(),
+  isGold: Joi.boolean()
+});
+const JoiValidateCustomer = (customer) => customerSchema.validate(customer, { abortEarly: false });
 
 const Customer = new mongoose.model('Customer', new mongoose.Schema({
   name: {
@@ -56,5 +65,6 @@ module.exports = {
   getAllCustomers,
   getCustomerById,
   updateCustomerById,
-  deleteCustomerById
+  deleteCustomerById,
+  JoiValidateCustomer
 };
