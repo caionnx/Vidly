@@ -1,74 +1,91 @@
 const Joi = require('joi');
 const express = require('express');
-const { concatErrorMessages } = require('../helpers');
+// Functions that will operate directly in the database
+const {
+  addNewGenre,
+  getAllGenres,
+  getGenreById,
+  updateGenreById,
+  deleteGenreById
+} = require('../database/genres');
 
-const router = express.Router();
-let genres = [
-  { id: 1, name: 'Terror' },
-  { id: 2, name: 'Action' }
-];
-const getGenreById = (id) => genres.find(genre => genre.id === id);
+// Helpers functions for Joi validation
+const { concatErrorMessages } = require('../helpers');
 const genreSchema = Joi.object({
   name: Joi.string().min(3).required(),
 });
 const validateGenreSchema = (genre) => genreSchema.validate(genre, { abortEarly: false });
 
-router.get('/', (req, res) => {
+// Router manipulation
+const router = express.Router();
+router.get('/', async (req, res) => {
+  const genres = await getAllGenres();
+
   return res.send(genres);
 });
 
-router.post('/', (req, res) => {
-  let newGenre = { ...req.body };
+router.post('/', async (req, res) => {
+  let data = { ...req.body };
   let errorMessage;
-  const { error } = validateGenreSchema(newGenre);
+  const { error } = validateGenreSchema(data);
   
   if (error) {
     errorMessage = concatErrorMessages({ arrayOfErrors: error.details, param: 'message' });
     return res.status(400).send(errorMessage);
   }
 
-  newGenre.id = genres[genres.length - 1].id + 1; // Takes the latest id to generate a new one
-  genres.push(newGenre);
-  return res.send(newGenre);
-});
-
-router.get('/:id', (req, res) => {
-  const genre = getGenreById(parseInt(req.params.id, 10));
-
-  if(!genre) {
-    return res.status(404).send('404 Not found.');  
+  try {
+    const newGenre = await addNewGenre(data);
+    return res.send(newGenre);
+  } catch (error) {
+    errorMessage = `Failed at mongo validation:\n${error.message}`
+    return res.status(400).send(errorMessage);
   }
-  
-  return res.send(genre);
 });
 
-router.put('/:id', (req, res) => {
-  let errorMessage;
-  let updateForGenre = { ...req.body }
-  const genre = getGenreById(parseInt(req.params.id, 10));
-  const { error } = validateGenreSchema(updateForGenre);
+router.get('/:id', async(req, res) => {
+  try {
+    const genre = await getGenreById(req.params.id);
 
-  if(!genre) {
-    return res.status(400).send('Genre not in list.');
-  } else if(error) {
-    errorMessage = concatErrorMessages({ arrayOfErrors: error.details, param: 'message' });
+    if(!genre) return res.status(404).send('404 Not found.');
+
+    return res.send(genre);
+  } catch (error) {
+    return res.status(400).send('Failed in handling Mongo operation.');
+  }
+});
+
+router.put('/:id', async(req, res) => {
+  let errorMessage;
+  let data = { ...req.body }
+  const { error: errorFromJoiValidation } = validateGenreSchema(data);
+
+  if(errorFromJoiValidation) {
+    errorMessage = concatErrorMessages({ arrayOfErrors: errorFromJoiValidation.details, param: 'message' });
     return res.status(400).send(errorMessage);
   }
 
-  genre.name = updateForGenre.name;
-  return res.send(genre);
+  try {
+    const genre = await updateGenreById(req.params.id, data);
+
+    if(!genre) return res.status(400).send('Invalid ID. Genre not found in database.');
+
+    return res.send(genre);
+  } catch (error) {
+    return res.status(400).send('Failed in handling Mongo operation.');
+  }
 });
 
-router.delete('/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
-  const genre = getGenreById(id);
+router.delete('/:id', async(req, res) => {
+  try {
+    const genre = await deleteGenreById(req.params.id);
 
-  if(!genre) {
-    return res.status(400).send('Genre not in list.');
+    if(!genre) return res.status(400).send('Invalid ID. Genre not found in database.');
+
+    return res.send(genre);
+  } catch (error) {
+    return res.status(400).send('Failed in handling Mongo operation.' + error);
   }
-  
-  genres = genres.filter(gnr => gnr.id !== id);
-  return res.send(genre);
 });
 
 module.exports = router;
