@@ -11,7 +11,8 @@ const isDevEnv = app.get('env') === 'development';
 async function startApplication() {
   try {
     await mongoose.connect('mongodb://localhost/vidly', { useNewUrlParser: true }) 
-    app.listen(PORT, () => `Vidly running on ${PORT}`);
+    console.log('Successfully connect to database.');
+    app.listen(PORT, () => console.log(`Vidly running on ${PORT}`));
   } catch (error) {
     const errorMessage = error.message || 'Error while connecting to database.';
     return console.log(errorMessage);
