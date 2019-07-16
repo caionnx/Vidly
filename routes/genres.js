@@ -7,7 +7,7 @@ const {
   getGenreById,
   updateGenreById,
   deleteGenreById
-} = require('../database/genres');
+} = require('../models/genres');
 
 // Helpers functions for Joi validation
 const { concatErrorMessages } = require('../helpers');

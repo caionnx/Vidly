@@ -7,7 +7,7 @@ const {
   getCustomerById,
   updateCustomerById,
   deleteCustomerById
-} = require('../database/customers');
+} = require('../models/customers');
 
 // Helpers functions for Joi validation
 const { concatErrorMessages } = require('../helpers');
