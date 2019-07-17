@@ -2,19 +2,19 @@ const Joi = require('joi');
 const mongoose = require('mongoose');
 
 // Helpers functions for Joi validation
-const genreSchema = Joi.object({
+const JoiGenreSchema = Joi.object({
   name: Joi.string().min(3).max(50).required(),
 });
-const JoiValidateGenre = (genre) => genreSchema.validate(genre, { abortEarly: false });
-
-const Genre = new mongoose.model('Genre', new mongoose.Schema({
+const JoiValidateGenre = (genre) => JoiGenreSchema.validate(genre, { abortEarly: false });
+const genreSchema = new mongoose.Schema({
   name: {
     type: String,
     minlength: 3,
     maxlength: 50,
     required: true
   }
-}));
+});
+const Genre = new mongoose.model('Genre', genreSchema);
 
 function getAllGenres() {
   return Genre.find();
@@ -54,5 +54,7 @@ module.exports = {
   getGenreById,
   updateGenreById,
   deleteGenreById,
+  genreSchema,
+  Genre,
   JoiValidateGenre
 };
