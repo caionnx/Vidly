@@ -1,12 +1,13 @@
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const mongoose = require('mongoose');
 const { Customer } = require('./customers');
 const { Movie } = require('./movies');
 
 // Helpers functions for Joi validation
 const rentalSchema = Joi.object({
-  customerId: Joi.string().required(),
-  movieId: Joi.string().required()
+  customerId: Joi.objectId().required(),
+  movieId: Joi.objectId().required()
 });
 const JoiValidateRental = (rental) => rentalSchema.validate(rental, { abortEarly: false });
 
@@ -125,7 +126,7 @@ async function addNewRental(data) {
     await movieSession.abortTransaction();
     await rentalSession.endSession();
     await movieSession.endSession();
-    
+
     return Promise.reject(error);
   }
 }

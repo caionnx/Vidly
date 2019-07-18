@@ -1,11 +1,12 @@
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const mongoose = require('mongoose');
 const { genreSchema, Genre } = require('./genres');
 
 // Helpers functions for Joi validation
 const movieSchema = Joi.object({
   title: Joi.string().min(3).max(50).required(),
-  genreId: Joi.string().max(50).required(),
+  genreId: Joi.objectId().required(),
   numberInStock: Joi.number().min(0).max(255).required(),
   dailyRentalRate: Joi.number().min(0).max(255).required()
 });
