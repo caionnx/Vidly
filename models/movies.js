@@ -4,7 +4,7 @@ const { genreSchema, Genre } = require('./genres');
 
 // Helpers functions for Joi validation
 const movieSchema = Joi.object({
-  name: Joi.string().min(3).max(50).required(),
+  title: Joi.string().min(3).max(50).required(),
   genreId: Joi.string().max(50).required(),
   numberInStock: Joi.number().min(0).max(255).required(),
   dailyRentalRate: Joi.number().min(0).max(255).required()
@@ -12,7 +12,7 @@ const movieSchema = Joi.object({
 const JoiValidateMovie = (movie) => movieSchema.validate(movie, { abortEarly: false });
 
 const Movie = new mongoose.model('Movie', new mongoose.Schema({
-  name: {
+  title: {
     type: String,
     minlength: 1,
     maxlength: 255,
