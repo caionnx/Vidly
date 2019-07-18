@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const genresRouter = require('./routes/genres');
 const custormersRouter = require('./routes/customers');
 const moviesRouter = require('./routes/movies');
+const rentalsRouter = require('./routes/rentals');
 
 const app = express();
 const PORT = process.env.port || 3000;
@@ -27,6 +28,7 @@ async function startApplication() {
   app.use('/api/genres', genresRouter);
   app.use('/api/customers', custormersRouter);
   app.use('/api/movies', moviesRouter);
+  app.use('/api/rentals', rentalsRouter);
 }
 
 startApplication();
