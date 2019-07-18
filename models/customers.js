@@ -61,6 +61,7 @@ function deleteCustomerById(id) {
 }
 
 module.exports = {
+  Customer,
   addNewCustomer,
   getAllCustomers,
   getCustomerById,

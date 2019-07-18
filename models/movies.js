@@ -80,6 +80,7 @@ function deleteMovieById(id) {
 }
 
 module.exports = {
+  Movie,
   addNewMovie,
   getAllMovies,
   getMovieById,
