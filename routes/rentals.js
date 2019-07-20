@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const authMiddleware = require('../middlewares/auth');
 const { concatErrorMessages } = require('../helpers');
 // Functions that will operate directly in the database
 const {
@@ -15,7 +16,7 @@ router.get('/', async (req, res) => {
   return res.send(rentals);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   let data = { ...req.body };
   let errorMessage;
   const { error } = JoiValidateRental(data);

@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const authMiddleware = require('../middlewares/auth');
+const adminMiddleware = require('../middlewares/adminAuth');
 const { concatErrorMessages } = require('../helpers');
 // Functions that will operate directly in the database
 const {
@@ -17,7 +19,7 @@ router.get('/', async (req, res) => {
   return res.send(customers);
 });
 
-router.post('/', async (req, res) => {
+router.post('/', authMiddleware, async (req, res) => {
   let data = { ...req.body };
   let errorMessage;
   const { error } = JoiValidateCustomer(data);
@@ -48,7 +50,7 @@ router.get('/:id', async(req, res) => {
   }
 });
 
-router.put('/:id', async(req, res) => {
+router.put('/:id', authMiddleware, async(req, res) => {
   let errorMessage;
   let data = { ...req.body }
   const { error: errorFromJoiValidation } = JoiValidateCustomer(data);
@@ -69,7 +71,7 @@ router.put('/:id', async(req, res) => {
   }
 });
 
-router.delete('/:id', async(req, res) => {
+router.delete('/:id', adminMiddleware, async(req, res) => {
   try {
     const customer = await deleteCustomerById(req.params.id);
 
