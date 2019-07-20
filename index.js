@@ -3,12 +3,15 @@ require('express-async-errors'); // Add an async handler wrapper to route functi
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const config = require('config');
+
 const genresRouter = require('./routes/genres');
 const custormersRouter = require('./routes/customers');
 const moviesRouter = require('./routes/movies');
 const rentalsRouter = require('./routes/rentals');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/auth');
+
+const errorMiddleware = require('./middlewares/error');
 
 const app = express();
 const PORT = process.env.port || 3000;
@@ -37,6 +40,7 @@ async function startApplication() {
   app.use('/api/rentals', rentalsRouter);
   app.use('/api/users', usersRouter);
   app.use('/api/auth', authRouter);
+  app.use(errorMiddleware);
 }
 
 startApplication();
