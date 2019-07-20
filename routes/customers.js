@@ -29,25 +29,16 @@ router.post('/', authMiddleware, async (req, res) => {
     return res.status(400).send(errorMessage);
   }
 
-  try {
-    const newCustomer = await addNewCustomer(data);
-    return res.send(newCustomer);
-  } catch (error) {
-    errorMessage = `Failed at mongo validation:\n${error.message}`
-    return res.status(400).send(errorMessage);
-  }
+  const newCustomer = await addNewCustomer(data);
+  return res.send(newCustomer);
 });
 
 router.get('/:id', async(req, res) => {
-  try {
-    const customer = await getCustomerById(req.params.id);
+  const customer = await getCustomerById(req.params.id);
 
-    if(!customer) return res.status(404).send('404 Not found.');
+  if(!customer) return res.status(404).send('404 Not found.');
 
-    return res.send(customer);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.');
-  }
+  return res.send(customer);
 });
 
 router.put('/:id', authMiddleware, async(req, res) => {
@@ -60,27 +51,19 @@ router.put('/:id', authMiddleware, async(req, res) => {
     return res.status(400).send(errorMessage);
   }
 
-  try {
-    const customer = await updateCustomerById(req.params.id, data);
+  const customer = await updateCustomerById(req.params.id, data);
 
-    if(!customer) return res.status(400).send('Invalid ID. Customer not found in database.');
+  if(!customer) return res.status(400).send('Invalid ID. Customer not found in database.');
 
-    return res.send(customer);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.');
-  }
+  return res.send(customer);
 });
 
 router.delete('/:id', adminMiddleware, async(req, res) => {
-  try {
-    const customer = await deleteCustomerById(req.params.id);
+  const customer = await deleteCustomerById(req.params.id);
 
-    if(!customer) return res.status(400).send('Invalid ID. Customer not found in database.');
+  if(!customer) return res.status(400).send('Invalid ID. Customer not found in database.');
 
-    return res.send(customer);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.' + error);
-  }
+  return res.send(customer);
 });
 
 module.exports = router;

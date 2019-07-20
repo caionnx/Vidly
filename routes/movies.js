@@ -30,25 +30,16 @@ router.post('/', authMiddleware, async (req, res) => {
     return res.status(400).send(errorMessage);
   }
 
-  try {
-    const newMovie = await addNewMovie(data);
-    return res.send(newMovie);
-  } catch (error) {
-    errorMessage = `Failed at mongo validation:\n${error.message}`
-    return res.status(400).send(errorMessage);
-  }
+  const newMovie = await addNewMovie(data);
+  return res.send(newMovie);
 });
 
 router.get('/:id', async(req, res) => {
-  try {
-    const movie = await getMovieById(req.params.id);
+  const movie = await getMovieById(req.params.id);
 
-    if(!movie) return res.status(404).send('404 Not found.');
+  if(!movie) return res.status(404).send('404 Not found.');
 
-    return res.send(movie);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.');
-  }
+  return res.send(movie);
 });
 
 router.put('/:id', authMiddleware, async(req, res) => {
@@ -61,27 +52,19 @@ router.put('/:id', authMiddleware, async(req, res) => {
     return res.status(400).send(errorMessage);
   }
 
-  try {
-    const movie = await updateMovieById(req.params.id, data);
+  const movie = await updateMovieById(req.params.id, data);
 
-    if(!movie) return res.status(400).send('Invalid ID. Movie not found in database.');
+  if(!movie) return res.status(400).send('Invalid ID. Movie not found in database.');
 
-    return res.send(movie);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.');
-  }
+  return res.send(movie);
 });
 
 router.delete('/:id', adminMiddleware, async(req, res) => {
-  try {
-    const movie = await deleteMovieById(req.params.id);
+  const movie = await deleteMovieById(req.params.id);
 
-    if(!movie) return res.status(400).send('Invalid ID. Movie not found in database.');
+  if(!movie) return res.status(400).send('Invalid ID. Movie not found in database.');
 
-    return res.send(movie);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.' + error);
-  }
+  return res.send(movie);
 });
 
 module.exports = router;

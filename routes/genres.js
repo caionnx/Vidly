@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth');
 const adminMiddleware = require('../middlewares/adminAuth');
-const { concatErrorMessages } = require('../helpers');
 // Functions that will operate directly in the database
 const {
   addNewGenre,
@@ -30,25 +29,16 @@ router.post('/', authMiddleware, async (req, res) => {
     return res.status(400).send(errorMessage);
   }
 
-  try {
-    const newGenre = await addNewGenre(data);
-    return res.send(newGenre);
-  } catch (error) {
-    errorMessage = `Failed at mongo validation:\n${error.message}`
-    return res.status(400).send(errorMessage);
-  }
+  const newGenre = await addNewGenre(data);
+  return res.send(newGenre);
 });
 
 router.get('/:id', async(req, res) => {
-  try {
-    const genre = await getGenreById(req.params.id);
+  const genre = await getGenreById(req.params.id);
 
-    if(!genre) return res.status(404).send('404 Not found.');
+  if(!genre) return res.status(404).send('404 Not found.');
 
-    return res.send(genre);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.');
-  }
+  return res.send(genre);
 });
 
 router.put('/:id', authMiddleware, async(req, res) => {
@@ -61,27 +51,19 @@ router.put('/:id', authMiddleware, async(req, res) => {
     return res.status(400).send(errorMessage);
   }
 
-  try {
-    const genre = await updateGenreById(req.params.id, data);
+  const genre = await updateGenreById(req.params.id, data);
 
-    if(!genre) return res.status(400).send('Invalid ID. Genre not found in database.');
+  if(!genre) return res.status(400).send('Invalid ID. Genre not found in database.');
 
-    return res.send(genre);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.');
-  }
+  return res.send(genre);
 });
 
 router.delete('/:id', adminMiddleware, async(req, res) => {
-  try {
-    const genre = await deleteGenreById(req.params.id);
+  const genre = await deleteGenreById(req.params.id);
 
-    if(!genre) return res.status(400).send('Invalid ID. Genre not found in database.');
+  if(!genre) return res.status(400).send('Invalid ID. Genre not found in database.');
 
-    return res.send(genre);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.' + error);
-  }
+  return res.send(genre);
 });
 
 module.exports = router;

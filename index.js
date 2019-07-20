@@ -1,4 +1,5 @@
 const express = require('express');
+require('express-async-errors'); // Add an async handler wrapper to route functions
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const config = require('config');

@@ -26,23 +26,14 @@ router.post('/', async (req, res) => {
     return res.status(400).send(errorMessage);
   }
 
-  try {
-    const { user: newUser, token } = await addNewUser({ ...data });
-    return res.header('x-auth-token', token).send(newUser);
-  } catch (error) {
-    errorMessage = `Failed at mongo validation:\n${error.message}`
-    return res.status(400).send(errorMessage);
-  }
+  const { user: newUser, token } = await addNewUser({ ...data });
+  return res.header('x-auth-token', token).send(newUser);
 });
 
 router.get('/me', authMiddleware, async(req, res) => {
-  try {
-    const user = await getUserById(req.user._id);
+  const user = await getUserById(req.user._id);
 
-    return res.send(user);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.');
-  }
+  return res.send(user);
 });
 
 module.exports = router;

@@ -26,25 +26,16 @@ router.post('/', authMiddleware, async (req, res) => {
     return res.status(400).send(errorMessage);
   }
 
-  try {
-    const newRental = await addNewRental(data);
-    return res.send(newRental);
-  } catch (error) {
-    errorMessage = `Failed at mongo validation:\n${error.message}`
-    return res.status(400).send(errorMessage);
-  }
+  const newRental = await addNewRental(data);
+  return res.send(newRental);
 });
 
 router.get('/:id', async(req, res) => {
-  try {
-    const rental = await getRentalById(req.params.id);
+  const rental = await getRentalById(req.params.id);
 
-    if(!rental) return res.status(404).send('404 Not found.');
+  if(!rental) return res.status(404).send('404 Not found.');
 
-    return res.send(rental);
-  } catch (error) {
-    return res.status(400).send('Failed in handling Mongo operation.');
-  }
+  return res.send(rental);
 });
 
 module.exports = router;
